@@ -136,6 +136,51 @@ python scripts/generate_report.py
 
 建议先用你自己的 key 试跑一次，看账单页的实际消耗。抓取部分（GitHub / HN / raw.githubusercontent.com）不计费。
 
+## 接入 Obsidian
+
+周报是在 **GitHub 的服务器上**生成的（`runs-on: ubuntu-latest`），你的电脑不参与执行，也不用一直开着。
+你的电脑只负责把结果拉下来看。两种接法，选一种：
+
+### 方式 A：仓库即 vault（推荐）
+
+1. 把仓库克隆到本地任意目录：
+
+   ```bash
+   git clone https://github.com/<你的用户名>/<仓库名>.git "D:\Notes\TechDigest"
+   ```
+
+2. Obsidian →「打开文件夹作为仓库」→ 选中这个目录
+3. 装插件：设置 → 第三方插件 → 关闭安全模式 → 浏览，安装
+   - **Obsidian Git**（必需）：定时拉取周报
+   - **Dataview**（可选）：首页看板
+4. 配置 Obsidian Git：设置 → Git
+   - `Auto pull interval` 填 `60`（分钟）
+   - `Auto pull on boot` 打开
+   - 首次 pull/push 会弹窗要账号：用户名填 GitHub 用户名，**密码必须填 Personal Access Token，不是登录密码**
+     - 生成 PAT：GitHub `Settings → Developer settings → Personal access tokens → Fine-grained tokens`，
+       勾选该仓库的 `Contents: Read and write`
+5. 启用样式（可选）：把 `assets/weekly-report.css` 复制到 `.obsidian/snippets/`，
+   设置 → 外观 → CSS 代码片段 → 刷新 → 打开 `weekly-report`
+6. 启用看板（可选）：把 `assets/dashboard.md` 复制到 vault 根目录，改名为 `Home.md`
+
+> **网络提示**：Obsidian Git 用的是内嵌的 isomorphic-git，**不读系统 git 的 `http.proxy` 配置**。
+> 如果你的网络需要代理才能连 GitHub，Obsidian 里可能会一直超时——
+> 这时可以用下面的方式 B，由你在终端手动 `git pull`（终端的 git 是能用代理配置的）。
+
+### 方式 B：已有 vault，本地生成
+
+不想把仓库当 vault，就让脚本直接写进你现有的 vault：
+
+```bash
+pip install -r requirements.txt
+export OBSIDIAN_VAULT="D:/Notes/MyVault"    # Windows: set OBSIDIAN_VAULT=D:\Notes\MyVault
+export DEEPSEEK_API_KEY=sk-xxx
+python scripts/generate_report.py
+```
+
+报告和记忆会直接写进 `<你的 vault>/Weekly/` 和 `<你的 vault>/Knowledge/`。
+这种方式不需要 GitHub Actions，也不用配 PAT——但需要你在自己的电脑上执行，而不是在 GitHub 上。
+
 ## Obsidian 样式（可选）
 
 仓库自带 `assets/weekly-report.css`：
@@ -164,9 +209,20 @@ scripts/
   hacker_news.py               抓 HN（含分数 / 评论数）
   readme_fetch.py              抓 README 供深读
 assets/weekly-report.css       Obsidian 样式片段
+assets/dashboard.md            Dataview 看板模板（可选）
 Weekly/                        输出的周报（运行后生成）
 Knowledge/                     跨周记忆与项目索引（运行后生成）
 ```
+
+## 运行在哪里？
+
+| 场景 | 在哪执行 | 需要什么 |
+|---|---|---|
+| GitHub Actions（默认） | **GitHub 的服务器**（Ubuntu），你的电脑关机也照跑 | 仓库 secret `DEEPSEEK_API_KEY` |
+| 本地运行 | 你自己的电脑 | Python 3.11+、依赖、环境变量里的 key |
+
+Actions 跑完会把报告 commit 回仓库，Obsidian 那边靠 Obsidian Git 插件定时 pull 下来，
+所以你的电脑上不需要装 Python，也不需要配置 key。
 
 ## 依赖
 
