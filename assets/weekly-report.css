@@ -1,0 +1,240 @@
+/* ============================================================
+   技术周报版式
+   作用于 frontmatter 里带 cssclasses: weekly-report 的笔记，
+   不影响 vault 里其他文件。
+
+   启用：设置 → 外观 → CSS 代码片段 → 刷新 → 打开 weekly-report
+   ============================================================ */
+
+.weekly-report {
+  --wr-accent: var(--interactive-accent);
+  --wr-warm: #e8a33d;
+  --wr-radius: 14px;
+  --wr-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 6px 18px rgba(0, 0, 0, 0.06);
+  --wr-hairline: color-mix(in srgb, var(--background-modifier-border) 75%, transparent);
+  /* 想更松就把这三个数调大；想更紧就调小 */
+  --wr-card-gap: 1.05em;   /* 卡片之间的间距 */
+  --wr-card-pad: 0.8em 1.05em 0.95em;  /* 卡片内边距 */
+  --wr-slot-gap: 0.85em;   /* 深读槽位之间的间距 */
+  --wr-title-size: 1.16em; /* 卡片标题里的项目名大小 */
+}
+
+/* ---------- 正文节奏 ---------- */
+.weekly-report {
+  line-height: 1.86;
+  letter-spacing: 0.008em;
+}
+.weekly-report p {
+  margin-block: 0.5em;
+}
+.weekly-report ul,
+.weekly-report ol {
+  padding-inline-start: 1.2em;
+}
+.weekly-report li {
+  margin-block: 0.32em;
+}
+.weekly-report a {
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--wr-accent) 45%, transparent);
+}
+.weekly-report a:hover {
+  border-bottom-color: var(--wr-accent);
+}
+
+/* ---------- 标题层级 ---------- */
+.weekly-report h1 {
+  font-size: 1.6em;
+  letter-spacing: -0.01em;
+  margin-block: 0 0.1em;
+}
+/* 标题下的「生成时间」行 */
+.weekly-report h1 + p {
+  color: var(--text-muted);
+  font-size: 0.88em;
+  margin-top: 0;
+}
+.weekly-report h2 {
+  font-size: 1.22em;
+  margin-block: 2.3em 1em;
+  padding: 0.3em 0.75em;
+  border-left: 4px solid var(--wr-accent);
+  border-radius: 0 8px 8px 0;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--wr-accent) 14%, transparent),
+    transparent 78%
+  );
+}
+.weekly-report h3 {
+  font-size: 0.9em;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-block: 1.7em 0.5em;
+}
+
+/* ---------- 卡片（callout） ---------- */
+.weekly-report .callout {
+  margin-block: var(--wr-card-gap);
+  border-radius: var(--wr-radius);
+  border: 1px solid var(--wr-hairline);
+  box-shadow: var(--wr-shadow);
+  background: var(--background-primary-alt);
+  overflow: hidden;
+  /* 统一内边距：Obsidian 默认左侧留 24px 图标槽，正文会被推得很靠右 */
+  padding: var(--wr-card-pad);
+}
+.weekly-report .callout-title {
+  padding: 0 0 0.4em;
+  font-weight: 600;
+}
+.weekly-report .callout-title-inner {
+  line-height: 1.5;
+}
+/* 项目名放大：标题里只有名字是加粗/链接，分类胶囊和重要度保持原尺寸 */
+.weekly-report .callout-title-inner strong,
+.weekly-report .callout-title-inner > a {
+  font-size: var(--wr-title-size);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.weekly-report .callout-title-inner strong a {
+  font-size: inherit;
+}
+.weekly-report .callout-content {
+  padding: 0;
+}
+/* 卡片内段落留白：不然四个槽位会挤成一团 */
+.weekly-report .callout-content > p {
+  margin-block: 0.65em;
+}
+.weekly-report .callout-content > p:first-child {
+  margin-top: 0;
+}
+.weekly-report .callout-content > p:last-child {
+  margin-bottom: 0;
+}
+/* 深读槽位之间再松一点 */
+.weekly-report .callout[data-callout="example"] .callout-content > p {
+  margin-block: var(--wr-slot-gap);
+}
+/* callout 内的列表不再额外缩进 */
+.weekly-report .callout-content ul,
+.weekly-report .callout-content ol {
+  padding-inline-start: 1.1em;
+  margin-inline-start: 0;
+}
+/* 本周必看：编号贴左，条目之间留白 */
+.weekly-report .callout[data-callout="important"] .callout-content ol {
+  padding-inline-start: 0;
+  list-style-position: inside;
+}
+.weekly-report .callout[data-callout="important"] .callout-content li {
+  margin-block: 0.45em;
+}
+/* 卡片第一行是数据（语言/Star/增长或 HN 分数），弱化显示 */
+.weekly-report .callout-content > p:first-child {
+  color: var(--text-muted);
+  font-size: 0.87em;
+  margin-top: 0;
+}
+/* 深读槽位（Obsidian 会把 li 内容包在 p 里，用后代选择器更稳） */
+.weekly-report .callout-content li strong {
+  color: var(--wr-accent);
+  font-weight: 600;
+}
+
+/* 分类做成圆角小标签 */
+.weekly-report .callout-title code {
+  background: color-mix(in srgb, var(--wr-accent) 18%, transparent);
+  color: var(--wr-accent);
+  border-radius: 999px;
+  padding: 0.05em 0.55em;
+  font-size: 0.8em;
+  font-weight: 600;
+}
+
+/* 深读卡片：左侧强调条 + 顶部渐变 */
+.weekly-report .callout[data-callout="example"] {
+  border-left: 4px solid var(--wr-accent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--wr-accent) 7%, var(--background-primary-alt)),
+    var(--background-primary-alt) 55%
+  );
+}
+
+/* 本周必看：暖色强调 */
+.weekly-report .callout[data-callout="important"] {
+  border-left: 4px solid var(--wr-warm);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--wr-warm) 9%, var(--background-primary-alt)),
+    var(--background-primary-alt) 55%
+  );
+}
+
+/* 本周数据：一行信息，去掉阴影 */
+.weekly-report .callout[data-callout="info"] {
+  box-shadow: none;
+  background: var(--background-secondary);
+}
+.weekly-report .callout[data-callout="info"] .callout-content > p {
+  font-size: 0.92em;
+  margin-block: 0.1em;
+}
+
+/* ---------- 表格 ---------- */
+.weekly-report table {
+  width: 100%;
+  font-size: 0.9em;
+  border: 1px solid var(--wr-hairline);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.weekly-report table th {
+  background: var(--background-secondary);
+  font-weight: 600;
+  padding: 0.5em 0.7em;
+}
+.weekly-report table td {
+  padding: 0.45em 0.7em;
+}
+.weekly-report table tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--background-secondary) 55%, transparent);
+}
+.weekly-report table tbody tr:hover td {
+  background: var(--background-modifier-hover);
+}
+
+/* ---------- 本周行动 ---------- */
+.weekly-report input[type="checkbox"] {
+  margin-inline-end: 0.5em;
+}
+.weekly-report li.task-list-item {
+  list-style: none;
+  margin-inline-start: -1.2em;
+}
+
+/* ---------- 折叠的原始数据 ---------- */
+.weekly-report .callout.is-collapsed .callout-content {
+  padding-bottom: 0;
+}
+
+/* ---------- 移动端 ---------- */
+@media (max-width: 640px) {
+  .weekly-report {
+    --wr-card-gap: 0.9em;
+    --wr-card-pad: 0.7em 0.85em 0.8em;
+    --wr-slot-gap: 0.7em;
+  }
+  .weekly-report .callout-title {
+    font-size: 0.94em;
+  }
+  .weekly-report h2 {
+    margin-top: 1.9em;
+  }
+  .weekly-report table {
+    font-size: 0.84em;
+  }
+}
