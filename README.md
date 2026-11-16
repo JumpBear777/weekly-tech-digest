@@ -49,12 +49,20 @@
 
 ### 1. 建仓库
 
-在你的 GitHub 上新建一个仓库（公开或私有都行），把本项目推上去：
+**方式 A：Fork（最省事）**
+
+点页面右上角 `Fork`。注意：**fork 出来的仓库 Actions 默认关闭**，需要打开 `Actions` 标签页，
+点一次「I understand my workflows, go ahead and enable them」。
+
+**方式 B：推到自己的空仓库**
+
+在 GitHub 新建一个空仓库（**不要**勾选 README / .gitignore / license），然后：
 
 ```bash
-git clone <你的仓库地址>
-cd <仓库目录>
-# 或者直接把本目录推到你新建的仓库
+git clone https://github.com/JumpBear777/weekly-tech-digest.git
+cd weekly-tech-digest
+git remote set-url origin https://github.com/<你的用户名>/<仓库名>.git
+git push -u origin main
 ```
 
 ### 2. 配置 API Key
@@ -82,6 +90,8 @@ python scripts/generate_report.py
 
 默认输出到**当前目录**下的 `Weekly/` 和 `Knowledge/`（目录不存在会自动创建）。
 想直接写进 Obsidian vault，用 `OBSIDIAN_VAULT` 指向 vault 根目录。
+
+> 国内网络装依赖可能很慢，可以加镜像：`pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple`
 
 ## 配置
 
